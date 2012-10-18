@@ -21,7 +21,7 @@ classdef smdata_class < handle
         function sm=smdata_class % Auto-fix the path.
            p=fileparts(which('smdata_class'));              
            addpath([p]);
-           addpath([p filesep 'channels']);
+           addpath([p filesep 'channels']); %assumes channels are in subdirectory of dir with smdata_class
         end
                 
         %% Functions relating to channel display
