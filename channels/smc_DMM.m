@@ -1,7 +1,6 @@
 classdef smc_DMM < sminst
     %Instrument class defining the agilent 34410A multi meter
-    %   This class inherits from the generic class sminst. It has no new
-    %   properties beyond those in sminst;
+    %   This class inherits from the generic class sminst. 
     %   The constructor for this class requires a name and a matlab object
     %   (for example a visa object).
     %   For example: dmm = visa('agilent', 'USB0::0x0957::0x0607::MY47020346::0::INSTR'); 
@@ -18,6 +17,7 @@ classdef smc_DMM < sminst
             obj.channels=[sminstchan('Val') sminstchan('Buf')];
             obj.channels(1).setable=0;
             obj.channels(2).setable=0;
+            obj.channels(1).datadim = 1;
         end
  
         function open(inst,chans)
@@ -40,7 +40,7 @@ classdef smc_DMM < sminst
         % Configure the buffer
         % Valid options: bus, ext, imm (see VMM manual)
         % Returns actual sample rate
-        function [rate]=bufconfig(inst, npts, rate, opts);
+        function [rate]=bufconfig(inst, npts, rate, opts)
             if ~exist('opts','var')
                 trigopts = 'bus';
             end
@@ -59,7 +59,7 @@ classdef smc_DMM < sminst
                 error('More than allowed number of samples requested. Correct and try again!\n');
             end
             
-            switch trigopts
+            switch opts
                 case 'bus'
                     fprintf(inst.inst, 'TRIG:SOUR BUS'); %set trigger to bus
                 case 'ext'
