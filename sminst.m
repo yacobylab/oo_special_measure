@@ -8,9 +8,9 @@ classdef sminst < handle
     
     properties
         inst;         % Handle for communicating with instrument, if applicable
-        channels;     % Channel array of sminstchans.
+        channels;     % Structure where each field is a channel.
         name;         % Name of *this particular* instrument
-        type;         % Human readable type of this instrument, ie. "Agilent DMM"
+        device;         % Human readable type of this instrument, ie. "Agilent DMM"
     end
     
     methods       
@@ -39,20 +39,7 @@ classdef sminst < handle
         function status = trigger(inst, chan)
             fprintf('Unhandled trigger operation on %s (%s)\n',inst.name, inst.type);
         end
-        
-        % If rate is empty, set the channel at default rate.
-        % If val is empty but rate is not, return how long the sweep should
-        % take.
-        function [val rate] = set(inst,chan,val,rate)
-           fprintf('Unhandled set operation on %s (%s)\n',inst.name, inst.type);
-        end
-        
-        function [val rate] = get(inst,chan)
-           fprintf('Unhandled get operation on %s (%s)\n',inst.name, inst.type);
-        end
-        
-    end
-    
+    end    
 end
 
 

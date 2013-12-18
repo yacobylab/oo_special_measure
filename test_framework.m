@@ -5,12 +5,16 @@ catch
 end
 clear all;
 a=instrfind;
-fclose(a);
+try
+  fclose(a);
+catch
+end
 global smdata;
 smdata=smdata_class;
-smdata.inst={smc_test('Count1'),smc_test('Count2'),smc_aux};
-smdata.channels=[smchannel('Count1',smdata.inst{1},1),smchannel('Count2',smdata.inst{2},1),smchannel('Time',smdata.inst{3},1)];
-smdata.sminitdisp;
+smdata.inst.Count1=smc_test('Count1'); 
+smdata.inst.Count2=smc_test('Count2'); 
+smdata.channels=[smchannel('foo','Count1','test'), smchannel('bar','Count2','test'), smchannel('ramp','Count1','ramp_test')]; %,smchannel('Time',smdata.inst{3},1)];
+%smdata.sminitdisp;
 fprintf('Done\n');
 
 %% Test setting
@@ -30,18 +34,18 @@ smset([1 2],[3 4]);
 assert(cell2mat(smget(1))==3);
 assert(cell2mat(smget(2)) == 4);
 fprintf('String set\n');
-smset({'Count1','Count2'},6);
-assert(cell2mat(smget('Count2')) == 6);
+smset({'foo','bar'},6);
+assert(cell2mat(smget('bar')) == 6);
 fprintf('Done\n');
 
 %% Test step-ramping
 fprintf('Ramping\n');
-smset(1,0);
-smdata.inst{1}.channels(1).ramp=0;
-smdata.channels(1).rangeramp=[-10 10 1 1];
+smset('ramp',0);
+r=smchanlookup('ramp');
+r.ramprate=1;
 tic;
-smset(1,1);
-if(abs(toc-1) > 0.1);
+smset('ramp',1);
+if(abs(toc-1) > 0.00001);
   fprintf('Ramp was expected to take 1 second; it took %g\n',toc);
 end
 fprintf('Done\n');

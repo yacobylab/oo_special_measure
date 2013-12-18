@@ -1,10 +1,11 @@
 classdef smdata_class < handle
     %SMDATA   Central data structure for special measure    
-    
+    %   All of special measure's functions assume there is a global
+    %    instance of this object called "smdata"
     properties
         inst={};       % Cell array of instruments
-        channels=[];   % Struct array of smchannel's.
-        configch=[];   % Numbers of channels to save to disk
+        channels;      % Structure of smchannel's.
+        configch=[];   % Cell array of numbers of channels to save with scan
         configfn={};   % Cell array of config functions.  Run at start of smrun, save values in configdata.
     end
     

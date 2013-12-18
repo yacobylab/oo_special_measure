@@ -1,26 +1,16 @@
-classdef smchannel
+classdef smchannel < hgsetget
     %smchan --  Structure that holds information on channels for smdata    
     
-    properties
-        inst;       % Handle of instrument
-        chan;       % Number of channel        
-        name;       % Human readable name of channel, used for smget/smset
-        rangeramp=[-inf inf inf 1];  % min, max, ramp rate (units/sec), divider factor
+    properties 
+        name;       % Name of this channel
+        inst;       % Handle of instrument (string)
+        channel;    % Number of channel    (string)
     end
-    
     methods
-        
-        % Default constructor.
-        function c=smchannel(name,inst,chan)
-            if exist('name','var') 
-                c.name=name;
-            end
-            if exist('inst','var')
-                c.inst=inst;
-            end
-            if exist('chan','var')
-                c.chan=chan;
-            end
+        function smc=smchannel(name,inst,channel)
+            smc.name = name;
+            smc.inst = inst;
+            smc.channel = channel;
         end
     end
 end

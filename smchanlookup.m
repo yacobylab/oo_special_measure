@@ -1,28 +1,26 @@
-function chanind = smchanlookup(channels);
-% function chanind = smchanlookup(channels);
-%    convert channel names to indices
+function [h] = smchanlookup(channels);
+% function h = smchanlookup(channels);
+% Convert channel names, smchannel objects, sminstchan objects, or channel
+%   indices to sminstchan handles.
 
 global smdata;
 
 if isnumeric(channels)
-    chanind = channels;
-    if size(chanind, 2) > 1
-        chanind = chanind';
-    end
+    smc=smdata.channels(channels);
+elseif isa(channels(1),'smchannel')
+    smc=channels;
+elseif isa(channels(1),'sminstchan')
+    h=channels
     return;
-end
-
-if ischar(channels)
-    channels = cellstr(channels);
-end
-
-chanind = zeros(length(channels), 1);
-
-for i = 1:length(channels)
-    m = strmatch(channels{i}, strvcat(smdata.channels.name), 'exact');
-    if(isempty(m))
-        error(sprintf('Unable to find sm channel "%s"\n',channels{i}));
-    else
-        chanind(i) = m;
+else
+    if ischar(channels)
+        channels = cellstr(channels);
     end
+    assert(iscell(channels));
+    for i = 1:length(channels)
+        smc(i) = findobj(smdata.channels, 'name', channels{i});
+    end
+end    
+for i=1:length(smc)
+  h(i)=smdata.inst.(smc(i).inst).channels.(smc(i).channel);
 end

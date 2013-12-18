@@ -17,8 +17,9 @@ classdef smc_test < sminst
            else
              inst.name='Test';
            end
-           inst.channels=sminstchan(name);
-           inst.data=zeros(size(inst.channels));
+           inst.channels.test=sminstchan(inst, @(o,v,r) o.parent.set(v,r), @(o) o.parent.get());
+           inst.channels.ramp_test=smstepchan(inst, @(o,v,r) o.parent.set(v,r), @(o) o.parent.get());
+           inst.data=0;
         end
         
         function open(inst)
@@ -33,17 +34,17 @@ classdef smc_test < sminst
         function status = trigger(inst, chans)
         end
         
-        function [val rate] = set(inst,chans,val,rate)
-            inst.data(chans)=val;           
-            if inst.debug
-                fprintf('Setting %s to %g\n',inst.channels(chans).name,val);
+        function [val rate] = set(o,val,rate)
+            o.data=val;
+            if o.debug
+                fprintf('Setting %s to %g\n',o.name,val);
             end
         end
         
-        function [val rate] = get(inst,chans)
-            val=inst.data(chans);           
-            if inst.debug
-                fprintf('Reading %s as %g\n',inst.channels(chans).name,val);
+        function [val rate] = get(o)
+            val=o.data;
+            if o.debug
+                fprintf('Reading %s as %g\n',o.name,val);
             end
         end  
     end

@@ -13,17 +13,13 @@ if(isempty(channels))
     return
 end
 
-if ~isnumeric(channels)
-    channels = smchanlookup(channels);
-end
-
-nchan = length(channels);
+h = smchanlookup(channels);
+nchan = length(h);
 data = cell(1, nchan);
 
-for i=1:length(channels)
-    c=smdata.channels(channels(i));
-    data{i}=c.inst.get(c.chan) / c.rangeramp(4);
-    smdata.chanvals(channels(i)) = data{i}(1);
+for i=1:length(h)    
+    data{i}=h(i).get();
+    h(i).val = data{i};    
 end
 
 if ishandle(smdata.chandisph)
