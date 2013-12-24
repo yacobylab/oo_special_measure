@@ -1,7 +1,8 @@
-classdef sminstchan < hgsetget
+classdef sminstchan < hgsetget & matlab.mixin.Heterogeneous
     %sminstchan --  Structure that holds information on channels for inst. classes.
     
     properties
+        name;       %human readable name
         parent=[];  % Parent instrument of this channel
         datadim=1;  % Dimension of this channel for setting/getting.
         datatype=1; % Type of this channel.  This should be a single value of the correct type.

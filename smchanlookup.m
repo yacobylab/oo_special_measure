@@ -1,4 +1,4 @@
-function [h] = smchanlookup(channels);
+function [h] = smchanlookup(channels)
 % function h = smchanlookup(channels);
 % Convert channel names, smchannel objects, sminstchan objects, or channel
 %   indices to sminstchan handles.
@@ -10,7 +10,7 @@ if isnumeric(channels)
 elseif isa(channels(1),'smchannel')
     smc=channels;
 elseif isa(channels(1),'sminstchan')
-    h=channels
+    h=channels;
     return;
 else
     if ischar(channels)

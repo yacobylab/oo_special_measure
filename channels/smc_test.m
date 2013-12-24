@@ -17,8 +17,14 @@ classdef smc_test < sminst
            else
              inst.name='Test';
            end
-           inst.channels.test=sminstchan(inst, @(o,v,r) o.parent.set(v,r), @(o) o.parent.get());
-           inst.channels.ramp_test=smstepchan(inst, @(o,v,r) o.parent.set(v,r), @(o) o.parent.get());
+          % the following only works if 
+          % sminstchan < matlab.mixin.Heterogeneous
+           inst.channels = sminstchan(inst, @(o,v,r) o.parent.set(v,r), @(o) o.parent.get());
+           inst.channels.name = 'test';
+           inst.channels(2)=smstepchan(inst, @(o,v,r) o.parent.set(v,r), @(o) o.parent.get());
+           inst.channels(2).name = 'ramp_test';
+           %inst.channels.test=sminstchan(inst, @(o,v,r) o.parent.set(v,r), @(o) o.parent.get());
+           %inst.channels.ramp_test=smstepchan(inst, @(o,v,r) o.parent.set(v,r), @(o) o.parent.get());
            inst.data=0;
         end
         

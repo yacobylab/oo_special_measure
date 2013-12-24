@@ -7,7 +7,7 @@ classdef smc_DMM < sminst
     %    DMM=smDMM('some_name',dmm);
     
     properties (Transient=true)
-        is34401;  % Is this a 34401?
+        is34401;  % Is this a 34401? will try to set it when opening the inst
     end
     
     methods
@@ -18,8 +18,17 @@ classdef smc_DMM < sminst
             end
             obj.name = name;
             obj.device='HP34401A';
-            obj.channels.val=sminstchan(inst,[],@(ob) query(o.inst,'READ?','%s\n','%f')); %only get function
-            obj.channels.buf=sminstchan(inst,[], @(ob) sscanf(query(o.inst,'FETCH?'),'%f'));
+            %make an array of sminstchans, empty sethandl will default to
+            %error because these channels aren't settable
+            % constuctor syntax function ic=sminstchan(parent,set,get)
+            % this only works because they're both sminstchans. we need to
+            % remedy this!
+            obj.channels = sminstchan(obj,[],@(o) query(o.inst,'READ?','%s\n','%f'));
+            obj.channels.name = 'val';
+            obj.channels(2) = sminstchan(obj,[],@(o) sscanf(query(o.inst,'FETCH?'),'%f'));
+            obj.channels(2).name = 'buf';
+            %obj.channels.val=sminstchan(inst,[],@(ob) query(o.inst,'READ?','%s\n','%f')); %only get function
+            %obj.channels.buf=sminstchan(inst,[], @(ob) sscanf(query(o.inst,'FETCH?'),'%f'));
             
         end
  
@@ -70,7 +79,7 @@ classdef smc_DMM < sminst
                 case {'bus','ext','imm'}
                     fprintf(inst.inst, ['TRIG:SOUR ',upper(opts)]); %set trigger to bus
                 otherwise
-                    error('trigger operation %s not supported',trigopts);
+                    error('trigger operation %s not supported',opts);
             end
             fprintf(inst.inst, 'SAMP:COUN %d', npts); % set samples to val
             fprintf(inst.inst, 'TRIG:DEL %f', trigdel); % set trigger delay
