@@ -23,9 +23,9 @@ classdef smc_DMM < sminst
             % constuctor syntax function ic=sminstchan(parent,set,get)
             % this only works because they're both sminstchans. we need to
             % remedy this!
-            obj.channels = sminstchan(obj,[],@(o) query(o.inst,'READ?','%s\n','%f'));
+            obj.channels = sminstchan(obj,[],@(o) query(o.parent.inst,'READ?','%s\n','%f'));
             obj.channels.name = 'val';
-            obj.channels(2) = sminstchan(obj,[],@(o) sscanf(query(o.inst,'FETCH?'),'%f'));
+            obj.channels(2) = sminstchan(obj,[],@(o) sscanf(query(o.parent.inst,'FETCH?'),'%f'));
             obj.channels(2).name = 'buf';
             %obj.channels.val=sminstchan(inst,[],@(ob) query(o.inst,'READ?','%s\n','%f')); %only get function
             %obj.channels.buf=sminstchan(inst,[], @(ob) sscanf(query(o.inst,'FETCH?'),'%f'));
