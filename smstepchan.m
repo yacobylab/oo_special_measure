@@ -24,9 +24,9 @@ classdef smstepchan < smrampchan
         % Set the channel, simulating ramps in software.
         function set(ic, val, rate)
             if ~exist('rate','var') || isempty(rate)
-                rate=ic.ramprate;
+                rate=ic.HWrate;
             else
-                rate=min(rate,ic.ramprate);
+                rate=min(rate,ic.HWrate);
             end
             if isinf(rate)
                 ic.sethndl(ic,val,inf);

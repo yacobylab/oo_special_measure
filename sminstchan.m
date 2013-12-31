@@ -3,6 +3,11 @@ classdef sminstchan < hgsetget & matlab.mixin.Heterogeneous
     
     properties
         name;       %human readable name
+        HWmin= -Inf;
+        HWmax = Inf;
+        HWoffset = 0;
+        HWrate = Inf;
+        HWdivider = 1;
         parent=[];  % Parent instrument of this channel
         datadim=1;  % Dimension of this channel for setting/getting.
         datatype=1; % Type of this channel.  This should be a single value of the correct type.
@@ -15,6 +20,13 @@ classdef sminstchan < hgsetget & matlab.mixin.Heterogeneous
     methods
         % Default constructor.
         function ic=sminstchan(parent,set,get)
+            %allowing empty constructors makes nice default behavior:
+            % it will let you say array(5) = sminstchan(some_arguments)
+            % even if array(1:4) don't exist. 
+            if ~exist('parent','var')
+                parent = [];
+                warning('no parent object given');
+            end
             ic.parent=parent;
             if exist('set','var') && ~isempty(set)
               ic.sethndl=set;
@@ -24,16 +36,25 @@ classdef sminstchan < hgsetget & matlab.mixin.Heterogeneous
             end
         end
         
-        function set(ic, val, rate)
+        function val = set(ic, val, rate)
+            val=min(val,ic.HWmax);
+            val=max(val,ic.HWmin);
+            val = val+ic.HWoffset;
+            %could do a check if nargout ==0 and change behavior?
             if nargin > 2
-                val=ic.sethndl(ic, val, rate);
+                val = ic.sethndl(ic, val./ic.HWdivider, min(rate,ic.HWrate)/ic.HWdivider);
+                %val=ic.sethndl(ic, val, min(rate,ic.HWrate));
             else
-                val=ic.sethndl(ic,val,[]);
+                val = ic.sethndl(ic, val./ic.HWdivider);
+                %val=ic.sethndl(ic,val,[]);
             end
+            ic.val = val;
         end
         
         function val=get(ic)
-            val=ic.gethndl(ic);
+            val=ic.gethndl(ic)*ic.HWdivider;
+            ic.val=val;
+            %val=ic.gethndl(ic);
         end                
         
         function finish(ic)  % Wait for last operation to complete.
